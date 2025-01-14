@@ -27,4 +27,4 @@ fclean: clean
 	rm -f $(NAME)
 
 run: all
-	./$(NAME)
+	./$(NAME) 127.0.0.1 6667 template bot_template password

@@ -21,6 +21,7 @@
 #include <exception>
 #include <string>
 #include <functional>
+#include <regex>
 
 class Bot;
 
@@ -98,11 +99,11 @@ class Bot
 		Bot(const Bot &bot) = delete;
 		Bot &operator=(const Bot &bot) = delete;
 
-		void setIp(std::string ip) { _ip = ip; }
-		void setPort(int port) { _port = port; }
-		void setPassword(std::string password) { _password = password; }
-		void setNick(std::string nick) { _nick = nick; }
-		void setUser(std::string user) { _user = user; }
+		void setIp(std::string ip);
+		void setPort(int port);
+		void setPassword(std::string password);
+		void setNick(std::string nick);
+		void setUser(std::string user);
 
 		void connectToServer();
 		void sendRawMessage(std::string msg);

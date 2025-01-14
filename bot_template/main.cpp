@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <string>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "Bot.hpp"
@@ -23,6 +24,12 @@ Bot &getBot()
 // TODO: fix that callbacks are not being called correctly
 int main(int argc, char *argv[])
 {
+	if (argc != 6)
+	{
+		std::cerr << "Usage: " << argv[0] << " <ip> <port> <nick> <user> <password>" << std::endl;
+		return 1;
+	}
+
 	try
 	{
 		Bot &bot = getBot();
@@ -35,17 +42,14 @@ int main(int argc, char *argv[])
 				onUserChannelJoin,
 				onUserChannelLeave
 			);
-		bot.setIp("127.0.0.1");
-		bot.setPort(6667);
-		bot.setNick("bot");
-		bot.setUser("bot");
-		bot.setPassword("password");
+
+		bot.setIp(argv[1]);
+		bot.setPort(std::stoi(argv[2]));
+		bot.setNick(argv[3]);
+		bot.setUser(argv[4]);
+		bot.setPassword(argv[5]);
 
 		bot.connectToServer();
-
-		// bot.authenticate();
-		// bot.startPollingForEvents();
-		// bot.changeChannel("#bot");
 
 	}
 	catch (const std::exception& e)
