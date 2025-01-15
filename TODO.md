@@ -4,4 +4,4 @@
 
 - TOPIC: can only input one word, maybe change it to >3? line: 343
 
-- 
+- #channel: only one person can write but at least everybody gets the messages
