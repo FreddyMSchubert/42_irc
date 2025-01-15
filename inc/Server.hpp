@@ -54,4 +54,6 @@ class Server
 		Client * getClientById(unsigned int id);
 		unsigned int getClientIdByName(std::string name);
 		Client * getClientByName(std::string name);
+
+		std::string name = "irctic.com";
 };

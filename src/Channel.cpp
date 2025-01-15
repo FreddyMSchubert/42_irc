@@ -25,8 +25,30 @@ std::string Channel::addMember(unsigned int clientId, Server &server)
 	_members[clientId] = true;
 	client->channel = this;
 	Logger::Log(LogLevel::INFO, std::string("Added client ") + client->nickname + " to channel " + name + ".");
-	broadcast(":" + client->nickname + "!" + server.getClientById(clientId)->username + "@irctic.com JOIN " + name, server, clientId);
-	return ":" + client->nickname + "!" + client->username + "@irctic.com JOIN " + name;
+	std::string joinMsg = ":" + client->nickname + "!" + client->username + "@" + server.name + " JOIN :" + name + "\r\n";
+	broadcast(joinMsg, server, clientId);
+
+	std::string response;
+	// 332 RPL_TOPIC
+	if (!topic.empty())
+		response += ":" + server.name + " 332 " + client->nickname + " " + name + " :" + topic + "\r\n";
+	// 353 RPL_NAMREPLY
+	std::string namesList;
+	for (const auto& member : _members)
+	{
+		if (member.second)
+		{
+			Client* m = server.getClientById(member.first);
+			if (m)
+				namesList += m->nickname + " ";
+		}
+	}
+	if (!namesList.empty())
+		namesList.pop_back();
+	response += ":" + server.name + " 353 " + client->nickname + " = " + name + " :" + namesList + "\r\n";
+	// 366 RPL_ENDOFNAMES
+	response += ":" + server.name + " 366 " + client->nickname + " " + name + " :End of /NAMES list\r\n";
+	return joinMsg + response;
 }
 std::string Channel::removeMember(unsigned int clientId, Server &server)
 {
