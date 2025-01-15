@@ -96,3 +96,38 @@ std::map<unsigned int, bool> & Channel::getMembers()
 {
 	return _members;
 }
+
+std::string Channel::getInfoString()
+{
+	std::string info = "Channel: \"" + name + "\"";
+	info += "\nTopic: \"" + topic + "\"";
+	info += "\nPassword: \"" + password + "\"";
+	info += "\nInvite Only: \"" + std::to_string(inviteOnly) + "\"";
+	info += "\nAnyone Can Change Topic: \"" + std::to_string(anyoneCanChangeTopic) + "\"";
+	info += "\nUser Limit: \"" + std::to_string(limit) + "\"";
+	info += "\nMembers: ";
+	for (const auto& member : _members)
+	{
+		if (member.second)
+			info += std::to_string(member.first) + " ";
+	}
+	info += "\nKicked: ";
+	for (const auto& kicked : _kicked)
+	{
+		if (kicked.second)
+			info += std::to_string(kicked.first) + " ";
+	}
+	info += "\nOperators: ";
+	for (const auto& op : _operators)
+	{
+		if (op.second)
+			info += std::to_string(op.first) + " ";
+	}
+	info += "\nInvites: ";
+	for (const auto& invite : _invites)
+	{
+		if (invite.second)
+			info += std::to_string(invite.first) + " ";
+	}
+	return info;
+}

@@ -39,4 +39,6 @@ class Channel
 		void addOperator(unsigned int clientId);
 		void removeOperator(unsigned int clientId);
 		bool isOperator(unsigned int clientId);
+
+		std::string getInfoString();
 };

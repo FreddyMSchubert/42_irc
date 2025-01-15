@@ -21,6 +21,7 @@ public:
 	static std::string HandleINVITE(const std::vector<std::string> &parts, Client & client, Server &server);
 	static std::string HandleTOPIC(const std::vector<std::string> &parts, Client & client, Server &server);
 	static std::string HandleMODE(const std::vector<std::string> &parts, Client & client, Server &server);
+	static std::string HandleDEBUG(const std::vector<std::string> &parts, Client & client, Server &server);
 
 	static std::string HandleCommand(const std::string &inCommand, unsigned int clientId, Server &server);
 
