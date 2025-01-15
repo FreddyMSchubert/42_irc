@@ -12,7 +12,11 @@ void Server::Run()
 	while (running) // to exit program, please send sigint
 	{
 		acceptNewConnections();
+		if (!running)
+			break;
 		updatePoll();
+		if (!running)
+			break;
 		handleExistingConnections();
 	}
 
