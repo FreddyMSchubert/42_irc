@@ -36,6 +36,7 @@ class Client
 		bool hasReceivedWelcome = false;
 		std::string nickname = "";
 		std::string username = "";
+		bool shouldDisconnect = false;
 
 		std::string getName();
 		bool isOperatorIn(Channel *channel);
