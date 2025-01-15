@@ -8,16 +8,6 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 	return totalSize;
 }
 
-Bot_DadJokes::Bot_DadJokes(
-	const std::string& host,
-	int port,
-	const std::string& password,
-	const std::string& user,
-	const std::string& realName
-) : Bot(host, port, password, user, realName)
-{
-}
-
 std::string Bot_DadJokes::ApiCall()
 {
 	CURL* curl;
@@ -43,4 +33,43 @@ std::string Bot_DadJokes::ApiCall()
 	}
 	curl_global_cleanup();
 	return response;
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc != 5)
+	{
+		std::cerr << "Usage: <./bot_binary> <host> <port> <password> <user>" << std::endl;
+		return 1;
+	}
+
+	try
+	{
+		Bot_DadJokes bot;
+		bot.setIp(argv[1]);
+		bot.setPort(std::stoi(argv[2]));
+		bot.setPassword(argv[3]);
+		bot.setUser(argv[4]);
+
+		bot.setCallbacks(
+			[]() {std::cout << "Connected to server" << std::endl;},
+			[](std::string err) {std::cerr << "Error: " << err << std::endl;},
+			[](std::string user, std::string channel, std::string msg) {std::cout << "Message from " << user << " in " << channel << ": " << msg << std::endl;},
+			[]() {std::cout << "Disconnected from server" << std::endl;},
+			[](std::string user, std::string channel) {std::cout << "User " << user << " joined channel " << channel << std::endl;},
+			[](std::string user, std::string channel) {std::cout << "User " << user << " left channel " << channel << std::endl;}
+		);
+
+		bot.connectToServer();
+		bot.authenticate();
+		std::string response = bot.ApiCall();
+		bot.sendMessage("#gpt", response); //is this right? if not just put the correct function there -> goal is to send it back to the user
+		
+		return 0;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return 1;
+	}
 }

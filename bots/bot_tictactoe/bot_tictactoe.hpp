@@ -1,6 +1,7 @@
 #ifndef BOT_TICTACTOE_HPP
 #define BOT_TICTACTOE_HPP
 
+#include "../../bot_template/Bot.hpp"
 #include <iostream>
 #include <curl/curl.h>
 #include <string>
@@ -8,7 +9,6 @@
 #include <regex>
 #include <vector>
 #include <sstream>
-#include "../Bot.hpp"
 
 class Bot_TicTacToe : public Bot
 {

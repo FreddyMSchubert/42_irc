@@ -23,6 +23,7 @@ std::string Channel::addMember(unsigned int clientId, Server &server, bool wasIn
 		return ":irctic.com 443 " + client->nickname + " " + name + " :is already on that channel";
 
 	_members[clientId] = true;
+	client->channel = this;
 	Logger::Log(LogLevel::INFO, std::string("Added client ") + client->nickname + " to channel " + name + ".");
 	broadcast(":" + client->nickname + "!" + server.getClientById(clientId)->username + "@irctic.com JOIN " + name, server, clientId);
 	return ":" + client->nickname + "!" + client->username + "@irctic.com JOIN " + name;

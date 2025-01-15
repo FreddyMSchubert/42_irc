@@ -32,3 +32,8 @@ re: fclean all
 
 ren: re
 	./$(NAME) 6667 password password
+
+party:
+	curl parrot.live
+pedro:
+	curl pedro.linuxhat.net

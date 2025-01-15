@@ -1,17 +1,24 @@
 #pragma once
 
-#include "../Bot.hpp"
+#include "../../bot_template/Bot.hpp"
 #include <string>
 #include <curl/curl.h>
 
 class Bot_ChatGPT : public Bot
 {
 	public:
-		Bot_ChatGPT(const std::string &host,
-					int port,
-					const std::string &password,
-					const std::string &user,
-					const std::string &realName);
-
-	std::string ApiCall(const std::string &prompt);
+		Bot_ChatGPT(
+			const std::string& host = "127.0.0.1",
+			int port = 6667,
+			const std::string& password = "password",
+			const std::string& nick = "chatgpt",
+			const std::string& user = "chatgpt"
+		) {
+			setIp(host);
+			setPort(port);
+			setPassword(password);
+			setNick(nick);
+			setUser(user);
+		}
+		std::string ApiCall(const std::string &prompt);
 };

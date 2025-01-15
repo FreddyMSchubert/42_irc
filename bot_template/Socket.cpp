@@ -10,16 +10,6 @@
 
 volatile bool Socket::_running = false;
 
-static std::vector<std::string> split(const std::string &str, char delim)
-{
-	std::vector<std::string> tokens;
-	std::stringstream ss(str);
-	std::string token;
-	while (std::getline(ss, token, delim))
-		tokens.push_back(token);
-	return tokens;
-}
-
 void Socket::signalHandler(int signum)
 {
 	std::cerr << "Caught signal: " << signum << std::endl;
@@ -125,7 +115,7 @@ void Socket::_sendMessage(std::string msg)
 		else
 			_onErrorCallback("Failed to send message");
 	}
-	else if (sent < msg.length())
+	else if (sent < static_cast<ssize_t>(msg.length()))
 		std::cerr << "Warning: Partial message sent: " << sent << " of " << msg.length() << " bytes" << std::endl;
 	else
 		std::cout << "Message sent successfully: " << msg << std::endl;
