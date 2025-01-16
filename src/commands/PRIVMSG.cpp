@@ -50,7 +50,7 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 				if (!targetClientPtr)
 					return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
 				targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
-					+ "PRIVMSG " + target + " " + CTCP_DELIMITER
+					+ "PRIVMSG " + target + " :" + CTCP_DELIMITER
 					+ dccCommand
 					+ CTCP_DELIMITER + "\r\n");
 				return ""; // no direct server response to the sender
