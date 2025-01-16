@@ -28,33 +28,76 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 	return totalSize;
 }
 
-std::string Bot::ApiCall()
+std::string Bot::ApiCall(const std::string &prompt)
 {
-	CURL* curl;
-	CURLcode res;
+	CURL* curl = curl_easy_init();
+	if (!curl)
+		return "Error: unable to init cURL";
+
 	std::string response;
-
-	std::cout << "Making API call" << std::endl;
-
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	curl = curl_easy_init();
+	struct curl_slist* headers = NULL;
 
-	if (curl)
-	{
-		curl_easy_setopt(curl, CURLOPT_URL, "https://icanhazdadjoke.com/");
-		struct curl_slist* headers = NULL;
-		headers = curl_slist_append(headers, "Accept: text/plain");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-		res = curl_easy_perform(curl);
-		if (res != CURLE_OK)
-			response = "cURL request failed: " + std::string(curl_easy_strerror(res));
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl);
-	}
+	curl_easy_setopt(curl, CURLOPT_URL, "https://api.openai.com/v1/chat/completions");
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+	headers = curl_slist_append(headers, "Authorization: Bearer APIKEY");
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+	std::string jsonBody =
+		"{"
+			"\"model\":\"gpt-3.5-turbo\","
+			"\"messages\":[{\"role\":\"user\",\"content\":\"" + prompt + "\"}],"
+			"\"max_tokens\":150"
+		"}";
+
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonBody.c_str());
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+	CURLcode res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+		return "cURL request failed: " + std::string(curl_easy_strerror(res));
+
+	curl_slist_free_all(headers);
+	curl_easy_cleanup(curl);
 	curl_global_cleanup();
-	return response;
+
+	if (response.empty())
+		return "Error: Empty response from API";
+
+	size_t errorPos = response.find("\"error\":");
+	if (errorPos != std::string::npos)
+	{
+		size_t msgStart = response.find("\"message\":\"", errorPos);
+		if (msgStart != std::string::npos)
+		{
+			msgStart += 11;
+			size_t msgEnd = response.find("\"", msgStart);
+			if (msgEnd != std::string::npos)
+				return "API Error: " + response.substr(msgStart, msgEnd - msgStart);
+		}
+		return "API Error: Unknown error format in response";
+	}
+
+	size_t contentPos = response.find("\"content\": \"");
+	if (contentPos == std::string::npos)
+		return "Error: Could not find content in message";
+
+	contentPos += 12;
+	size_t endPos = response.find("\"", contentPos);
+	if (endPos == std::string::npos)
+		return "Error: Malformed response - missing closing quote";
+
+	std::string content = response.substr(contentPos, endPos - contentPos);
+
+	size_t pos = 0;
+	while ((pos = content.find("\\n", pos)) != std::string::npos)
+	{
+		content.replace(pos, 2, "\n");
+		pos += 1;
+	}
+
+	return content;
 }
 
 int main(int argc, char *argv[])
@@ -78,11 +121,6 @@ int main(int argc, char *argv[])
 		bot.setPassword(argv[5]);
 
 		bot.connectToServer();
-
-		// bot.authenticate();
-		// bot.startPollingForEvents();
-		// bot.changeChannel("#bot");
-
 	}
 	catch (const std::exception& e)
 	{
@@ -100,7 +138,7 @@ void onConnect()
 	try {
 		std::cout << "Trying to athenticate." << std::endl;
 		getBot().authenticate();
-		getBot().changeChannel("#jokes");
+		getBot().changeChannel("#gpt");
 		getBot().startPollingForEvents();
 	} catch (std::exception& e) {
 		std::cerr << "Failed to authenticate: " << e.what() << std::endl;
@@ -116,22 +154,13 @@ void onError(std::string message)
 // custom function to handle messages
 void onMessage(std::string user, std::string channel, std::string message)
 {
-	std::cout << "Received message from " << user << " in channel " << channel << ": " << message << std::endl;
 	Bot &bot = getBot();
 
-	if (message == "joke")
-	{
-		std::string response = bot.ApiCall();
-		bot.directMessage(channel, response);
-	}
-	else if (message == "help")
-	{
-		bot.directMessage(channel, "Type 'joke' to get a random dad joke.");
-	}
-	else
-	{
-		bot.directMessage(channel, "Type 'help' for available commands.");
-	}
+	if (channel != "#gpt")
+	   return;
+
+	bot.sendMessage(channel, bot.ApiCall(message));
+
 }
 
 // custom function to handle disconnect
@@ -144,7 +173,7 @@ void onUserChannelJoin(std::string user, std::string channel)
 {
 	std::cout << "User " << user << " joined channel " << channel << std::endl;
 
-	getBot().directMessage(channel, "Welcome " + user + " to the channel! Type 'help' for available commands.");
+	getBot().directMessage(user, "Welcome " + user + " to the channel! Just type anything and pgt will answer.");
 }
 
 void onUserChannelLeave(std::string user, std::string channel)

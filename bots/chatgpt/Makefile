@@ -1,4 +1,4 @@
-NAME = bot_template
+NAME = chatgpt
 
 CXX = c++
 CXXFLAGS = -g -std=c++17
@@ -27,4 +27,4 @@ fclean: clean
 	rm -f $(NAME)
 
 run: all
-	./$(NAME) 127.0.0.1 6667 jokes dadjokes password
+	./$(NAME) 127.0.0.1 6667 chatgptBOT chatgpt password

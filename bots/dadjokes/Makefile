@@ -1,4 +1,4 @@
-NAME = bot_template
+NAME = jokes_bot
 
 CXX = c++
 CXXFLAGS = -g -std=c++17
@@ -27,4 +27,4 @@ fclean: clean
 	rm -f $(NAME)
 
 run: all
-	./$(NAME)
+	./$(NAME) 127.0.0.1 6667 jokesBOT dadjokes password
