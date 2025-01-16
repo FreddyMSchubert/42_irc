@@ -15,5 +15,5 @@ void CommandHandler::HandleNICK(const std::vector<std::string> &parts, Client & 
 	client.nickname = parts[1];
 	if (client.updateAuthStatus())
 			CompleteHandshake(client);
-	client.sendCodeResponse(300, "Nickname is now \"" + parts[1] + "\"", "NICK");
+	client.sendCodeResponse(200, "Nickname is now \"" + parts[1] + "\"", "NICK");
 }
