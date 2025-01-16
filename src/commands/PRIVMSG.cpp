@@ -51,7 +51,7 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 		return client.sendCodeResponse(411, "No text to send", "PRIVMSG");
 
 	std::string target = parts[1];
-	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " :";
+	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " ";
 
 	for (size_t i = 2; i < parts.size(); i++)
 	{

@@ -187,6 +187,7 @@ void Socket::_parseBuffer(std::string buffer)
 	if (buffer.empty())
 		return;
 
+	buffer = trim(buffer);
 	std::cout << "Parsing buffer: " << buffer << std::endl;
 
 	std::regex joinRegex(":([^!]+)![^ ]+ JOIN ([^ ]+)");
