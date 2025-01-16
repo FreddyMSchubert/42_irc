@@ -26,6 +26,8 @@ public:
 	static std::string HandleCommand(const std::string &inCommand, unsigned int clientId, Server &server);
 
 private:
+	static std::string HandleDCC(std::string target, std::string msg, Client & client, Server &server);
+
 	// Helper functions
 	static std::vector<std::string> split(const std::string &str, char delim);
 	static std::string CompleteHandshake(Client & client);
