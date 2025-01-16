@@ -14,6 +14,7 @@ class Channel
 		std::map<unsigned int, bool> _members;
 		std::map<unsigned int, bool> _kicked;
 		std::map<unsigned int, bool> _operators;
+		std::map<unsigned int, bool> _invites;
 
 	public:
 		Channel(std::string name);
@@ -27,8 +28,9 @@ class Channel
 
 		void broadcast(std::string msg, Server &server, unsigned int except_id = -1);
 
-		std::string addMember(unsigned int client, Server &server, bool wasInvited = false);
+		std::string addMember(unsigned int client, Server &server);
 		std::string removeMember(unsigned int clientId, Server &server);
+		std::string inviteMember(unsigned int clientId, Server &server);
 		std::map<unsigned int, bool> & getMembers();
 	
 		void kick(unsigned int clientId, Server &server);
@@ -37,4 +39,6 @@ class Channel
 		void addOperator(unsigned int clientId);
 		void removeOperator(unsigned int clientId);
 		bool isOperator(unsigned int clientId);
+
+		std::string getInfoString();
 };

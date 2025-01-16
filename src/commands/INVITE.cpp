@@ -14,8 +14,7 @@ std::string CommandHandler::HandleINVITE(const std::vector<std::string> &parts, 
 	Client *clientToInvite = server.getClientByName(userToInvite);
 	if (!clientToInvite)
 		return ":irctic.com 401 " + userToInvite + " :No such nick/channel"; // ERR_NOSUCHNICK
-	channel->unkick(clientToInvite->id);
-	channel->addMember(clientToInvite->id, server);
+	channel->inviteMember(clientToInvite->id, server);
 
 	clientToInvite->sendMessage(":irctic.com INVITE " + userToInvite + " " + channel->name + " :You've been invited to the channel"); // RPL_INVITE
 	return ":irctic.com 341 INVITE " + userToInvite + " " + channel->name + " :Invited";
