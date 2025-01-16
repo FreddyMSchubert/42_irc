@@ -1,17 +1,19 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleUSER(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleUSER(const std::vector<std::string> &parts, Client & client, Server &server)
 {
+	if (client.username != "")
+		return client.sendCodeResponse(400, "Username already set");
 	if (parts.size() < 2)
-		return ":irctic.com 461 USER :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "USER");
 	if (parts[1].size() <= 0 || parts[1][0] == '#')
-		return ":irctic.com 432 * " + parts[1] + " :Erroneous username"; // ERR_ERRONEUSNICKNAME
+		return client.sendCodeResponse(432, "Erroneous username", parts[1]);
 
 	for (auto &c : server.getClients())
 		if (c.username == parts[1])
-			return ":irctic.com 464 * :Username is already in use"; // Custom error for duplicate username
+			return client.sendCodeResponse(464, "Username is already in use");
 	client.username = parts[1];
 	if (client.updateAuthStatus())
 			CompleteHandshake(client);
-	return "Your username is now \"" + parts[1] + "\".";
+	return client.sendCodeResponse(200, "Username set to " + parts[1]);
 }

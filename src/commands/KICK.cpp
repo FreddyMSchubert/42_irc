@@ -1,23 +1,23 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleKICK(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleKICK(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (parts.size() < 3)
-		return ":irctic.com 461 KICK :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "KICK");
 	Channel *channel = server.getChannel(parts[1]);
 	if (!channel)
-		return ":irctic.com 403 " + parts[1] + " :No such channel"; // ERR_NOSUCHCHANNEL
+		return client.sendCodeResponse(403, "No such channel", parts[1]);
 	if (!client.isOperatorIn(channel))
-		return ":irctic.com 482 " + parts[1] + " :You're not channel operator"; // ERR_CHANOPRIVSNEEDED
+		return client.sendCodeResponse(482, "You're not channel operator", parts[1]);
 
 	Client *clientToKick = server.getClientByName(parts[2]);
 	if (!clientToKick)
-		return ":irctic.com 401 " + parts[2] + " :No such nick/channel"; // ERR_NOSUCHNICK
+		return client.sendCodeResponse(401, "No such nick/channel", parts[2]);
 	channel->kick(clientToKick->id, server);
 
 	if (parts.size() < 4)
-		clientToKick->sendMessage("You have been kicked from " + channel->name + ".");
+		return clientToKick->sendCodeResponse(403, "No reason given", "KICK");
 	else
-		clientToKick->sendMessage("You have been kicked from " + channel->name + " (" + parts[3] + ").");
-	return ":irctic.com 200 KICK " + channel->name + " " + parts[2] + " :Kicked";
+		return clientToKick->sendCodeResponse(403, "Kicked (" + parts[3] + ")", "KICK");
+	client.sendCodeResponse(200, "KICK", channel->name + " " + parts[2] + " :Kicked");
 }

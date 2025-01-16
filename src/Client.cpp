@@ -80,3 +80,12 @@ std::string Client::getInfoString()
 	info += "welcome: " + std::to_string(hasReceivedWelcome);
 	return info;
 }
+
+void Client::sendCodeResponse(int code, std::string msg, std::string arg)
+{
+	if (msg.empty())
+		return;
+	if (msg[msg.size() - 1] != '\n')
+		msg += "\r\n";
+	sendMessage(":irctic.com " + std::to_string(code) + " " + arg + " : " + msg);
+}

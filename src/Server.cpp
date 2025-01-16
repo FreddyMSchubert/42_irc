@@ -141,8 +141,6 @@ void Server::handleExistingConnections()
 			{
 				_sockets[i].socket.sendData(_sockets[i].outbuffer);
 				std::cout << "Sent: \"" << _sockets[i].outbuffer << "\"" << std::endl; // temporary, for irssi debugging
-				for (int c : _sockets[i].outbuffer)
-					std::cout << c << " ";
 				_sockets[i].outbuffer.clear();
 			}
 			catch (const std::exception &e)
@@ -173,9 +171,7 @@ void Server::HandleClientData(unsigned int clientId)
 			lineEnd = newLinePos - 1;
 		std::string line = client->inbuffer.substr(0, lineEnd);
 		client->inbuffer.erase(0, newLinePos + 1);
-		std::string response = CommandHandler::HandleCommand(line, clientId, *this);
-		if (!response.empty())
-			client->sendMessage(response + "\r\n");
+		CommandHandler::HandleCommand(line, clientId, *this);
 	}
 }
 

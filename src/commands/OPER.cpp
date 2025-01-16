@@ -1,20 +1,19 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleOPER(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleOPER(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (parts.size() != 3)
-		return ":irctic.com 461 OPER :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "OPER");
 	if (!client.isAuthenticated)
-		return ":irctic.com 451 * :You have not registered"; // ERR_NOTREGISTERED
+		return client.sendCodeResponse(451, "You have not registered");
 
 	Client *target = server.getClientByName(parts[1]);
 	if (!target)
-		return ":irctic.com 401 " + parts[1] + " :No such nick/channel"; // ERR_NOSUCHNICK
+		return client.sendCodeResponse(401, "No such nick/channel", parts[1]);
 	if (server.isCorrectOperatorPassword(parts[2]))
 	{
 		target->isOperator = true;
-		return ":irctic.com 381 * :" + target->nickname + " is now an IRC operator"; // RPL_YOUREOPER
+		return client.sendCodeResponse(381, "You are now an IRC operator", target->nickname);
 	}
-	std::cout << "Typed operator password: \"" << parts[2] << "\"" << std::endl;
-	return ":irctic.com 464 * :Operator password incorrect"; // ERR_PASSWDMISMATCH
+	return client.sendCodeResponse(464, "Operator password incorrect");
 }

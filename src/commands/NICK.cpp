@@ -1,17 +1,19 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleNICK(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleNICK(const std::vector<std::string> &parts, Client & client, Server &server)
 {
+	if (client.nickname != "")
+		return client.sendCodeResponse(400, "Nickname already set", "NICK");
 	if (parts.size() != 2)
-		return ":irctic.com 461 NICK :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "NICK");
 	if (parts[1][0] == '#')
-		return ":irctic.com 432 * " + parts[1] + " :Erroneous nickname"; // ERR_ERRONEUSNICKNAME
+		return client.sendCodeResponse(432, "Erroneous nickname", parts[1]);
 
 	for (auto &c : server.getClients())
 		if (c.nickname == parts[1])
-			return ":irctic.com 433 * " + parts[1] + " :Nickname is already in use"; // ERR_NICKNAMEINUSE
+			return client.sendCodeResponse(433, "Nickname is already in use", parts[1]);
 	client.nickname = parts[1];
 	if (client.updateAuthStatus())
 			CompleteHandshake(client);
-	return ":irctic.com NICK " + client.nickname; // NICK change broadcast
+	client.sendCodeResponse(300, "Nickname is now \"" + parts[1] + "\"", "NICK");
 }

@@ -41,6 +41,7 @@ class Client
 		std::string getName();
 		bool isOperatorIn(Channel *channel);
 		void sendMessage(std::string msg);
+		void sendCodeResponse(int code, std::string msg, std::string arg = "");
 		bool updateAuthStatus();
 
 		std::string getInfoString();

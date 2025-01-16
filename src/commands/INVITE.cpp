@@ -1,21 +1,21 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleINVITE(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleINVITE(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (parts.size() != 3)
-		return ":irctic.com 461 INVITE :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "INVITE");
 	Channel *channel = server.getChannel(parts[2]);
 	if (!channel)
-		return ":irctic.com 403 " + parts[2] + " :No such channel"; // ERR_NOSUCHCHANNEL
+		return client.sendCodeResponse(403, "No such channel", parts[2]);
 	if (!client.isOperatorIn(channel))
-		return ":irctic.com 482 " + parts[2] + " :You're not channel operator"; // ERR_CHANOPRIVSNEEDED
+		return client.sendCodeResponse(482, "You're not channel operator", parts[2]);
 
 	std::string userToInvite = parts[1];
 	Client *clientToInvite = server.getClientByName(userToInvite);
 	if (!clientToInvite)
-		return ":irctic.com 401 " + userToInvite + " :No such nick/channel"; // ERR_NOSUCHNICK
+		return client.sendCodeResponse(401, "No such nick/channel", userToInvite);
 	channel->inviteMember(clientToInvite->id, server);
 
 	clientToInvite->sendMessage(":irctic.com INVITE " + userToInvite + " " + channel->name + " :You've been invited to the channel"); // RPL_INVITE
-	return ":irctic.com 341 INVITE " + userToInvite + " " + channel->name + " :Invited";
+	client.sendCodeResponse(341, "Invited", "INVITE " + userToInvite + " " + channel->name);
 }

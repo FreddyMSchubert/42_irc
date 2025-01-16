@@ -1,22 +1,12 @@
 #include "../../inc/CommandHandler.hpp"
 
-#define CTCP_DELIMITER "\x01"
-
-// static std::string trimLeadingColons(const std::string &str)
-// {
-// 	size_t start = 0;
-// 	while (start < str.size() && str[start] == ':')
-// 		start++;
-// 	return str.substr(start);
-// }
-
-std::string CommandHandler::HandleDCC(std::string target, std::string msg, Client & client, Server &server)
+void CommandHandler::HandleDCC(std::string target, std::string msg, Client & client, Server &server)
 {
-    std::cout << "DCC request" << std::endl;
+	std::cout << "DCC request" << std::endl;
 	std::string dccCommand = msg.substr(msg.rfind("\x01" "DCC "), msg.size() - 2); // remove \x01's
 	std::vector<std::string> dccParts = split(dccCommand, ' ');
 	if (dccParts.size() < 3)
-		return ":irctic.com 461 DCC :Not enough parameters for DCC"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "DCC");
 
 	std::string dccType = dccParts[1];
 	std::cout << "DCC parts size: " << dccParts.size() << std::endl;
@@ -39,32 +29,29 @@ std::string CommandHandler::HandleDCC(std::string target, std::string msg, Clien
 		{
 			Client *targetClientPtr = server.getClientByName(target);
 			if (!targetClientPtr)
-				return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
+				return client.sendCodeResponse(401, "No such nick/channel", target);
 			targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
 				+ "PRIVMSG " + target + " :"
 				+ dccCommand
 				+ "\r\n");
-			return ""; // no direct server response to the sender
+			return ; // no direct server response to the sender
 		}
 		else
-			return ":irctic.com 400 " + target + " :Cannot DCC SEND to a channel"; // ERR_UNKNOWNERROR
+			return client.sendCodeResponse(400, "Cannot DCC SEND to a channel", target);
 	}
 	else
-		return ":irctic.com 400 DCC :Unsupported DCC command"; // ERR_UNKNOWNERROR
+		client.sendCodeResponse(400, "Unsupported DCC command", "DCC");
 }
 
-std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (!client.isAuthenticated)
-		return ":irctic.com 451 PRIVMSG :You have not registered"; // ERR_NOTREGISTERED
+		return client.sendCodeResponse(451, "You have not registered", "PRIVMSG");
 	if (parts.size() < 3)
-		return ":irctic.com 412 PRIVMSG :No text to send"; // ERR_NOTEXTTOSEND
+		return client.sendCodeResponse(411, "No text to send", "PRIVMSG");
 
 	std::string target = parts[1];
 	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " :";
-
-	// for (auto &part : parts)
-	// 	std::cout << "Part: " << part << std::endl;
 
 	for (size_t i = 2; i < parts.size(); i++)
 	{
@@ -81,7 +68,7 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 	{
 		Channel *channel = server.getChannel(target);
 		if (!channel)
-			return ":irctic.com 403 " + target + " :No such channel"; // ERR_NOSUCHCHANNEL
+			return client.sendCodeResponse(403, "No such channel", target);
 		channel->broadcast(msg, server, client.id);
 	}
 	else if (target != client.nickname)
@@ -89,9 +76,9 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 		std::cout << "Sending message to " << target << std::endl;
 		Client *targetClientPtr = server.getClientByName(target);
 		if (!targetClientPtr)
-			return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
+			return client.sendCodeResponse(401, "No such nick/channel", target);
 		if (!targetClientPtr->isAuthenticated)
-			return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
+			return client.sendCodeResponse(401, "No such nick/channel", target);
 		targetClientPtr->sendMessage(msg);
 	}
 
@@ -100,5 +87,5 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 
 	Logger::Log(LogLevel::INFO, std::string(client.getName() + " sent a message to " + target + ": " + msg));
 
-	return std::string();
+	return ;
 }

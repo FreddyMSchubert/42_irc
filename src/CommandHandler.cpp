@@ -12,32 +12,28 @@ std::vector<std::string> CommandHandler::split(const std::string &str, char deli
 	return tokens;
 }
 
-std::string CommandHandler::CompleteHandshake(Client &client)
+void CommandHandler::CompleteHandshake(Client &client)
 {
 	if (client.isAuthenticated && !client.hasReceivedWelcome)
 	{
-		std::string welcomeMsg = ":irctic.com 001 " + client.nickname + " :Welcome to the IRCtic, " + client.nickname + "!";
-		client.sendMessage(welcomeMsg);
+		client.sendCodeResponse(001, "Welcome to the IRCtic, " + client.nickname + "!", client.nickname);
 		client.hasReceivedWelcome = true;
 		Logger::Log(LogLevel::INFO, "Sent RPL_WELCOME to " + client.nickname);
-		return welcomeMsg;
 	}
-
-	return "";
 }
 
-std::string CommandHandler::HandleCommand(const std::string &inCommand, unsigned int clientId, Server & server)
+void CommandHandler::HandleCommand(const std::string &inCommand, unsigned int clientId, Server & server)
 {
 	Client *clientPtr = server.getClientById(clientId);
 	if (!clientPtr)
-		return ":irctic.com 401 * :No such nick/channel"; // ERR_NOSUCHNICK
+		return ;
 	Client &client = *clientPtr;
 
 	Logger::Log(LogLevel::INFO, "Received command from " + client.getName() + ": " + inCommand);
 
 	std::vector<std::string> parts = split(inCommand, ' ');
 	if (parts.empty())
-		return ":irctic.com 421 :Unknown command"; // ERR_UNKNOWNCOMMAND
+		client.sendCodeResponse(421, "Unknown command");
 
 	static const std::vector<CommandMapping> commandMappings = {
 		{ "PASS", &CommandHandler::HandlePASS },
@@ -61,5 +57,5 @@ std::string CommandHandler::HandleCommand(const std::string &inCommand, unsigned
 		if (parts[0] == mapping.command)
 			return mapping.func(parts, client, server);
 
-	return ":irctic.com 421 " + parts[0] + " :Unknown command"; // ERR_UNKNOWNCOMMAND
+	client.sendCodeResponse(421, "Unknown command");
 }

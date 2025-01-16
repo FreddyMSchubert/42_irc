@@ -1,10 +1,10 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleQUIT(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleQUIT(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	(void)server;
 	if (parts.size() > 1)
-		return "QUIT :" + parts[1] + "\r\n";
+		return client.sendCodeResponse(461, "Not enough parameters", "QUIT");
 	client.shouldDisconnect = true;
-	return "QUIT\r\n";
+	client.sendCodeResponse(221, "Goodbye", "QUIT");
 }

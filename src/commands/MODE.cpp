@@ -1,14 +1,14 @@
 #include "../../inc/CommandHandler.hpp"
 
-std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Client & client, Server &server)
+void CommandHandler::HandleMODE(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (parts.size() < 3 || parts.size() > 4)
-		return ":irctic.com 461 MODE :Not enough parameters"; // ERR_NEEDMOREPARAMS
+		return client.sendCodeResponse(461, "Not enough parameters", "MODE");
 	Channel *channel = server.getChannel(parts[1]);
 	if (!client.isOperatorIn(channel))
-		return ":irctic.com 403 " + parts[1] + " :No such channel"; // ERR_NOSUCHCHANNEL
+		return client.sendCodeResponse(403, "No such channel", parts[1]);
 	if (!channel)
-		return ":irctic.com 482 " + parts[1] + " :You're not channel operator"; // ERR_CHANOPRIVSNEEDED
+		return client.sendCodeResponse(482, "You're not channel operator", parts[1]);
 
 	std::string mode = parts[2];
 	if (mode == "+i")
@@ -34,7 +34,7 @@ std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Cl
 	else if (mode == "+k")
 	{
 		if (parts.size() != 4)
-			return ":irctic.com 461 MODE +k :Not enough parameters"; // ERR_NEEDMOREPARAMS
+			return client.sendCodeResponse(461, "Not enough parameters", "MODE +k");
 		channel->password = parts[3];
 		channel->broadcast(":irctic.com MODE " + channel->name + " +k " + channel->password + "", server); // RPL_CHANNELMODEIS
 	}
@@ -46,7 +46,7 @@ std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Cl
 	else if (mode == "+l")
 	{
 		if (parts.size() != 4)
-			return ":irctic.com 461 MODE +l :Not enough parameters"; // ERR_NEEDMOREPARAMS
+			return client.sendCodeResponse(461, "Not enough parameters", "MODE +l");
 		channel->limit = std::stoi(parts[3]);
 		channel->broadcast(":irctic.com MODE " + channel->name + " +l " + std::to_string(channel->limit) + "", server); // RPL_CHANNELMODEIS
 	}
@@ -58,7 +58,7 @@ std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Cl
 	else if (mode == "+o")
 	{
 		if (parts.size() != 4)
-			return ":irctic.com 461 MODE +o :Not enough parameters"; // ERR_NEEDMOREPARAMS
+			return client.sendCodeResponse(461, "Not enough parameters", "MODE +o");
 		unsigned int clientIdToOp = server.getClientIdByName(parts[3]);
 		if (clientIdToOp > 0)
 		{
@@ -66,12 +66,12 @@ std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Cl
 			channel->broadcast(":irctic.com MODE " + channel->name + " +o " + parts[3] + "", server); // RPL_CHANNELMODEIS
 		}
 		else
-			return ":irctic.com 401 " + parts[3] + " :No such nick/channel"; // ERR_NOSUCHNICK
+			client.sendCodeResponse(401, "No such nick/channel", parts[3]);
 	}
 	else if (mode == "-o")
 	{
 		if (parts.size() != 4)
-			return ":irctic.com 461 MODE -o :Not enough parameters"; // ERR_NEEDMOREPARAMS
+			return client.sendCodeResponse(461, "Not enough parameters", "MODE -o");
 		unsigned int clientIdToDeop = server.getClientIdByName(parts[3]);
 		if (clientIdToDeop > 0)
 		{
@@ -79,10 +79,8 @@ std::string CommandHandler::HandleMODE(const std::vector<std::string> &parts, Cl
 			channel->broadcast(":irctic.com MODE " + channel->name + " -o " + parts[3] + "", server); // RPL_CHANNELMODEIS
 		}
 		else
-			return ":irctic.com 401 " + parts[3] + " :No such nick/channel"; // ERR_NOSUCHNICK
+			return client.sendCodeResponse(401, "No such nick/channel", parts[3]);
 	}
 	else
-		return ":irctic.com 501 " + mode + " :Unknown MODE flag"; // ERR_UMODEUNKNOWNFLAG
-	
-	return "";
+		return client.sendCodeResponse(501, "Unknown MODE flag", mode);
 }
