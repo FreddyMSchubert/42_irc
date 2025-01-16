@@ -26,7 +26,7 @@ void Channel::addMember(unsigned int clientId, Server &server)
 	client->channel = this;
 	Logger::Log(LogLevel::INFO, std::string("Added client ") + client->nickname + " to channel " + name + ".");
 	std::string joinMsg = ":" + client->nickname + "!" + client->username + "@" + server.name + " JOIN :" + name + "\r\n";
-	broadcast(joinMsg, server, clientId);
+	broadcast(joinMsg, server, server.getClientById(clientId));
 
 	std::string response;
 	// 332 RPL_TOPIC
@@ -59,7 +59,7 @@ std::string Channel::removeMember(unsigned int clientId, Server &server)
 	if (!client)
 		return ":irctic.com 401 * :No such nick/channel";
 	client->channel = nullptr;
-	broadcast(":" + client->nickname + "!" + server.getClientById(clientId)->username + "@irctic.com PART " + name, server, clientId);
+	broadcast(":" + client->nickname + "!" + client->username + "@irctic.com PART " + name, server, server.getClientById(clientId));
 	return ":" + client->nickname + "!" + client->username + "@irctic.com PART " + name;
 }
 std::string Channel::inviteMember(unsigned int clientId, Server &server)
@@ -76,13 +76,22 @@ std::string Channel::inviteMember(unsigned int clientId, Server &server)
 	return ":irctic.com 341 " + client->nickname + " " + name + " :Invited to channel";
 }
 
-void Channel::broadcast(std::string msg, Server &server, unsigned int except_id)
+void Channel::broadcast(std::string msg, Server &server, Client * client)
 {
+	if (client)
+	{
+		if (!_members[client->id])
+			return;
+		if (_kicked[client->id])
+			return;
+	}
 	for (const auto& member : _members)
 	{
 		unsigned int clientId = member.first;
-		if (clientId != except_id && member.second)
+		if (member.second)
 		{
+			if (client && clientId == client->id)
+				continue;
 			Client* client = server.getClientById(clientId);
 			if (client)
 				client->sendMessage(msg);

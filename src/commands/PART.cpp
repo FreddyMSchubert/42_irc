@@ -9,9 +9,10 @@ void CommandHandler::HandlePART(const std::vector<std::string> &parts, Client & 
 	if (parts.size() < 2)
 		return client.sendCodeResponse(461, "Not enough parameters", "PART"); // ERR_NEEDMOREPARAMS
 
-	std::string partMessage = "PART " + client.channel->name;
-	if (parts.size() > 1)
-		partMessage += " 300 :" + parts[1];
+	std::string reason = parts.size() > 1 ? parts[1] : "";
+	std::string partMessage = ":" + client.nickname + "!" + client.username + "@irctic.com PART " + client.channel->name;
+	if (!reason.empty())
+		partMessage += " :" + reason;
 	partMessage += "\r\n";
 
 	client.channel->removeMember(client.id, server);

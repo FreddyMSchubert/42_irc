@@ -26,7 +26,7 @@ class Channel
 		bool anyoneCanChangeTopic = true;
 		int limit = 0;
 
-		void broadcast(std::string msg, Server &server, unsigned int except_id = -1);
+		void broadcast(std::string msg, Server &server, Client * client = nullptr);
 
 		void addMember(unsigned int client, Server &server);
 		std::string removeMember(unsigned int clientId, Server &server);
