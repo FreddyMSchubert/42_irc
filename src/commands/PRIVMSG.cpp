@@ -69,7 +69,7 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 		Channel *channel = server.getChannel(target);
 		if (!channel)
 			return client.sendCodeResponse(403, "No such channel", target);
-		channel->broadcast(msg, server, client.id);
+		channel->broadcast(msg, server, &client);
 	}
 	else if (target != client.nickname)
 	{
@@ -80,6 +80,10 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 		if (!targetClientPtr->isAuthenticated)
 			return client.sendCodeResponse(401, "No such nick/channel", target);
 		targetClientPtr->sendMessage(msg);
+	}
+	else
+	{
+		client.sendMessage(msg);
 	}
 
 	if (msg.back() == '\n')
