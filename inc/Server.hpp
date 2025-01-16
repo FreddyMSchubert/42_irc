@@ -40,7 +40,7 @@ class Server
 		Server &operator=(Server const &src) = delete;
 		Server(Server&& other) noexcept = default;
 		~Server() = default;
-		
+
 		void Run(); // Main Server loop
 
 		bool isCorrectPassword(std::string passwordAttempt);
