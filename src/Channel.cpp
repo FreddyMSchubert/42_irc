@@ -4,23 +4,23 @@
 
 Channel::Channel(std::string name) : name(name) {};
 
-std::string Channel::addMember(unsigned int clientId, Server &server)
+void Channel::addMember(unsigned int clientId, Server &server)
 {
 	Client * client = server.getClientById(clientId);
 	if (!client)
-		return ":irctic.com 401 * :No such nick/channel";
+		return client->sendCodeResponse(401, "No such nick/channel");
 
 	if (inviteOnly && !_invites[clientId])
-		return ":irctic.com 473 " + client->nickname + " " + name + " :Cannot join channel (+i)";
+		return client->sendCodeResponse(473, "Cannot join channel (+i)", name);
 	if (_kicked[clientId] && !_invites[clientId])
-		return ":irctic.com 474 " + client->nickname + " " + name + " :Banned from channel";
+		return client->sendCodeResponse(474, "Banned from channel", name);
 	size_t currMemberInChannel = 0;
 	for (const auto& member : _members)
 		currMemberInChannel += member.second;
 	if (limit > 0 && currMemberInChannel >= (size_t)limit)
-		return ":irctic.com 471 " + client->nickname + " " + name + " :Cannot join channel (+l)";
+		return client->sendCodeResponse(471, "Cannot join channel (+l)", name);
 	if (_members[clientId])
-		return ":irctic.com 443 " + client->nickname + " " + name + " :is already on that channel";
+		return client->sendCodeResponse(443, "is already on that channel", name);
 
 	_members[clientId] = true;
 	client->channel = this;
@@ -48,7 +48,8 @@ std::string Channel::addMember(unsigned int clientId, Server &server)
 	response += ":" + server.name + " 353 " + client->nickname + " = " + name + " :" + namesList + "\r\n";
 	// 366 RPL_ENDOFNAMES
 	response += ":" + server.name + " 366 " + client->nickname + " " + name + " :End of /NAMES list\r\n";
-	return joinMsg + response;
+	client->sendMessage(joinMsg + response);
+	// return joinMsg + response;
 }
 std::string Channel::removeMember(unsigned int clientId, Server &server)
 {

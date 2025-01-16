@@ -14,6 +14,9 @@ void CommandHandler::HandleKICK(const std::vector<std::string> &parts, Client & 
 	if (!clientToKick)
 		return client.sendCodeResponse(401, "No such nick/channel", parts[2]);
 	channel->kick(clientToKick->id, server);
+	clientToKick->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com KICK " + channel->name + " " + clientToKick->getName() + " :Kicked");
+	channel->broadcast(":" + client.nickname + "!" + client.username + "@irctic.com KICK " + channel->name + " " + clientToKick->getName() + " :Kicked", server, clientToKick->id);
+	clientToKick->channel = nullptr;
 
 	if (parts.size() < 4)
 		return clientToKick->sendCodeResponse(403, "No reason given", "KICK");

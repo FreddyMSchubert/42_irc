@@ -94,6 +94,6 @@ void Client::sendCodeResponse(int code, const std::string msg, const std::string
 	ss << std::setw(3) << std::setfill('0') << code;
 	std::string paddedCode = ss.str();
 
-	std::string fullMessage = ":irctic.com " + paddedCode + " " + arg + " : " + formattedMsg;
+	std::string fullMessage = ":irctic.com " + paddedCode + " " + this->nickname + " " + arg + " :" + formattedMsg; //check if its ok if we always send the nickname with it
 	sendMessage(fullMessage);
 }

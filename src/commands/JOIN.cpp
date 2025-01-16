@@ -33,6 +33,9 @@ void CommandHandler::HandleJOIN(const std::vector<std::string> &parts, Client & 
 
 	if (channel->password != "" && (parts.size() < 3 || parts[2] != channel->password))
 		return client.sendCodeResponse(475, "Cannot join channel (+k)", channelName); // ERR_BADCHANNELKEY
+	
+	if (channel->isKicked(client.id))
+		return client.sendCodeResponse(474, "Cannot join channel (+b)", channelName); // ERR_BANNEDFROMCHAN
 
 	channel->addMember(client.id, server);
 	client.channel = channel;
