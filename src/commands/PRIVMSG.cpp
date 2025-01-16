@@ -2,6 +2,14 @@
 
 #define CTCP_DELIMITER "\x01"
 
+// static std::string trimLeadingColons(const std::string &str)
+// {
+// 	size_t start = 0;
+// 	while (start < str.size() && str[start] == ':')
+// 		start++;
+// 	return str.substr(start);
+// }
+
 std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (!client.isAuthenticated)
@@ -10,7 +18,11 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 		return ":irctic.com 412 PRIVMSG :No text to send"; // ERR_NOTEXTTOSEND
 
 	std::string target = parts[1];
-	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " :";
+	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " ";
+	
+	// for (auto &part : parts)
+	// 	std::cout << "Part: " << part << std::endl;
+
 	for (size_t i = 2; i < parts.size(); i++)
 	{
 		msg += parts[i];
@@ -18,6 +30,8 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 			msg += " ";
 	}
 	msg += "\r\n";
+
+	// std::cout << "------>" <<  msg << std::endl;
 
 	if (msg.size() > 4 && msg.rfind("\x01" "DCC ", 0) == 0)
 	{

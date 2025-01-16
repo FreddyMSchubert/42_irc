@@ -9,19 +9,6 @@
 class Bot_DadJokes : public Bot
 {
 	public:
-		Bot_DadJokes(
-			const std::string& host = "127.0.0.1",
-			int port = 6667,
-			const std::string& password = "password",
-			const std::string& nick = "chatgpt",
-			const std::string& user = "chatgpt"
-		) {
-			setIp(host);
-			setPort(port);
-			setPassword(password);
-			setNick(nick);
-			setUser(user);
-		}
 		std::string ApiCall();
 };
 
