@@ -132,7 +132,7 @@ void Socket::Run()
 
 	while (_running)
 	{
-		int ret = poll(fds, 1, 50);
+		int ret = poll(fds, 1, 200);
 		if (ret == -1)
 			_onErrorCallback("Poll error: " + std::string(strerror(errno)));
 		else if (ret > 0 && _running)

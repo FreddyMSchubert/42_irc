@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
 		bot.connectToServer();
 		bot.authenticate();
 		std::string response = bot.ApiCall();
-		bot.sendMessage("#gpt", response); //is this right? if not just put the correct function there -> goal is to send it back to the user
-		
+		bot.directMessage(bot.getUser(), response);
+
 		return 0;
 	}
 	catch (const std::exception& e)
