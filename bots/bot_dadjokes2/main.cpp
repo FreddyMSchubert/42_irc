@@ -34,6 +34,8 @@ std::string Bot::ApiCall()
 	CURLcode res;
 	std::string response;
 
+	std::cout << "Making API call" << std::endl;
+
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
 
@@ -55,7 +57,6 @@ std::string Bot::ApiCall()
 	return response;
 }
 
-// TODO: fix that callbacks are not being called correctly
 int main(int argc, char *argv[])
 {
 	try
@@ -115,11 +116,22 @@ void onError(std::string message)
 // custom function to handle messages
 void onMessage(std::string user, std::string channel, std::string message)
 {
+	std::cout << "Received message from " << user << " in channel " << channel << ": " << message << std::endl;
 	Bot &bot = getBot();
 
-	std::string response = bot.ApiCall();
-	bot.changeChannel("#jokes");
-	bot.directMessage(user, response);
+	if (message == "joke")
+	{
+		std::string response = bot.ApiCall();
+		bot.directMessage(channel, response);
+	}
+	else if (message == "help")
+	{
+		bot.directMessage(channel, "Type 'joke' to get a random dad joke.");
+	}
+	else
+	{
+		bot.directMessage(channel, "Type 'help' for available commands.");
+	}
 }
 
 // custom function to handle disconnect

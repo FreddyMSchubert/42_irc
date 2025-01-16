@@ -39,7 +39,7 @@ void Bot::authenticate()
 
 void Bot::directMessage(std::string user, std::string msg)
 {
-	socket.queueMessage("PRIVMSG " + user + " :" + msg);
+	socket.queueMessage("PRIVMSG " + user + " " + msg);
 }
 
 void Bot::sendRawMessage(std::string msg)

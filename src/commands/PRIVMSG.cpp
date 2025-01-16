@@ -43,7 +43,7 @@ std::string CommandHandler::HandleDCC(std::string target, std::string msg, Clien
 			targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
 				+ "PRIVMSG " + target + " :"
 				+ dccCommand
-			 + "\r\n");
+				+ "\r\n");
 			return ""; // no direct server response to the sender
 		}
 		else
@@ -61,7 +61,7 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 		return ":irctic.com 412 PRIVMSG :No text to send"; // ERR_NOTEXTTOSEND
 
 	std::string target = parts[1];
-	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " ";
+	std::string msg = ":" + client.nickname + "!" + client.username + "@irctic.com PRIVMSG " + target + " :";
 
 	// for (auto &part : parts)
 	// 	std::cout << "Part: " << part << std::endl;
@@ -75,7 +75,7 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 	msg += "\r\n";
 
 	if (msg.size() > 4 && msg.rfind("\x01" "DCC ") != std::string::npos) // XXX: File transfer request
-	    return HandleDCC(target, msg, client, server);
+		return HandleDCC(target, msg, client, server);
 
 	if (target[0] == '#')
 	{
