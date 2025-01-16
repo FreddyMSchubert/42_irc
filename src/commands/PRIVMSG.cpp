@@ -21,12 +21,15 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 
 	if (msg.size() > 4 && msg.rfind("\x01" "DCC ", 0) == 0) // XXX: File transfer request
 	{
+	    std::cout << "DCC request" << std::endl;
 		std::string dccCommand = msg.substr(1, msg.size() - 2); // remove \x01's
 		std::vector<std::string> dccParts = split(dccCommand, ' ');
 		if (dccParts.size() < 3)
 			return ":irctic.com 461 DCC :Not enough parameters for DCC"; // ERR_NEEDMOREPARAMS
 
 		std::string dccType = dccParts[1];
+		if (*dccType.begin() == ':')
+            dccType = dccType.substr(1);
 		if (dccType == "SEND" && dccParts.size() >= 5) // DCC SEND <filename> <ip> <port> <filesize> -> DCC file request
 		{
 			std::cout << "DCC SEND request from " << client.getName() << msg << std::endl;
@@ -37,8 +40,8 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 
 			Logger::Log(LogLevel::INFO, "DCC SEND request from " + client.getName() + msg +
 										"\n\t=> File: " + fileName +
-										",\n\tIP: " + ipStr + 
-										",\n\tPort: " + portStr + 
+										",\n\tIP: " + ipStr +
+										",\n\tPort: " + portStr +
 										",\n\tFileSize: " + fileSize);
 			if (target[0] != '#')
 			{
@@ -46,8 +49,8 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 				if (!targetClientPtr)
 					return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
 				targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
-					+ "PRIVMSG " + target + " :" + CTCP_DELIMITER
-					+ dccCommand 
+					+ "PRIVMSG " + target + " " + CTCP_DELIMITER
+					+ dccCommand
 					+ CTCP_DELIMITER + "\r\n");
 				return ""; // no direct server response to the sender
 			}
@@ -64,7 +67,7 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 					return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
 				targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
 					+ "PRIVMSG " + target + " :" + CTCP_DELIMITER
-					+ dccCommand 
+					+ dccCommand.substr(1)
 					+ CTCP_DELIMITER + "\r\n");
 				return ""; // no direct server response to the sender
 			}
