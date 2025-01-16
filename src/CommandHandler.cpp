@@ -53,7 +53,8 @@ std::string CommandHandler::HandleCommand(const std::string &inCommand, unsigned
 		{ "KICK", &CommandHandler::HandleKICK },
 		{ "INVITE", &CommandHandler::HandleINVITE },
 		{ "TOPIC", &CommandHandler::HandleTOPIC },
-		{ "MODE", &CommandHandler::HandleMODE }
+		{ "MODE", &CommandHandler::HandleMODE },
+		{ "DEBUG", &CommandHandler::HandleDEBUG }
 	};
 
 	for (const auto &mapping : commandMappings)

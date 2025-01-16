@@ -68,3 +68,15 @@ bool Client::updateAuthStatus()
 	isAuthenticated = !nickname.empty() && !username.empty() && knewPassword;
 	return isAuthenticated;
 }
+
+std::string Client::getInfoString()
+{
+	std::string info = "Client " + std::to_string(id) + " (fd " + std::to_string(fd) + ")" + ": ";
+	info += "n: " + nickname + ", ";
+	info += "u: " + username + ", ";
+	info += "auth: " + std::to_string(isAuthenticated) + ", ";
+	info += "op: " + std::to_string(isOperator) + ", ";
+	info += "knewpw: " + std::to_string(knewPassword) + ", ";
+	info += "welcome: " + std::to_string(hasReceivedWelcome);
+	return info;
+}

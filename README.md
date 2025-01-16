@@ -1,5 +1,7 @@
 # Irssi Command Reference
 
+> irssi -c localhost -p 6667 -w password --config "~/.irssi/config"
+
 ## 1. Basic Irssi Commands
 
 | **Action**                  | **Irssi Command**                            | **Description**                                           |
