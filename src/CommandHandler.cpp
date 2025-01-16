@@ -33,7 +33,7 @@ void CommandHandler::HandleCommand(const std::string &inCommand, unsigned int cl
 
 	std::vector<std::string> parts = split(inCommand, ' ');
 	if (parts.empty())
-		client.sendCodeResponse(421, "Unknown command");
+		return client.sendCodeResponse(421, "Unknown command");
 
 	static const std::vector<CommandMapping> commandMappings = {
 		{ "PASS", &CommandHandler::HandlePASS },
