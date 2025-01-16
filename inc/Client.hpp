@@ -2,6 +2,9 @@
 
 #include "Socket.hpp"
 
+#include <sstream>
+#include <iomanip>
+
 class Channel; // avoid circ depend
 
 typedef struct s_socket_state

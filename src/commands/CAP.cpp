@@ -6,7 +6,7 @@ void CommandHandler::HandleCAP(const std::vector<std::string> &parts, Client & c
 	(void)server;
 
 	if (parts.size() < 2)
-		client.sendCodeResponse(461, "Not enough parameters", "CAP");
+		return client.sendCodeResponse(461, "Not enough parameters", "CAP");
 
 	if (parts[1] == "LS")
 		return client.sendCodeResponse(302, "", "CAP * LS");

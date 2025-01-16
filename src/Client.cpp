@@ -81,11 +81,19 @@ std::string Client::getInfoString()
 	return info;
 }
 
-void Client::sendCodeResponse(int code, std::string msg, std::string arg)
+void Client::sendCodeResponse(int code, const std::string msg, const std::string arg)
 {
 	if (msg.empty())
 		return;
-	if (msg[msg.size() - 1] != '\n')
-		msg += "\r\n";
-	sendMessage(":irctic.com " + std::to_string(code) + " " + arg + " : " + msg);
+
+	std::string formattedMsg = msg;
+	if (formattedMsg.back() != '\n')
+		formattedMsg += "\r\n";
+
+	std::stringstream ss;
+	ss << std::setw(3) << std::setfill('0') << code;
+	std::string paddedCode = ss.str();
+
+	std::string fullMessage = ":irctic.com " + paddedCode + " " + arg + " : " + formattedMsg;
+	sendMessage(fullMessage);
 }
