@@ -49,23 +49,6 @@ std::string CommandHandler::HandleDCC(std::string target, std::string msg, Clien
 		else
 			return ":irctic.com 400 " + target + " :Cannot DCC SEND to a channel"; // ERR_UNKNOWNERROR
 	}
-	else if ((dccType == "ACCEPT" || dccType == "REJECT") && dccParts.size() == 4) // DCC ACCEPT/REJECT <filename> <ip> <port> <filesize> -> DCC file accept/decline
-	{
-		std::cout << "DCC ACCEPT/REJECT request from " << client.getName() << msg << std::endl;
-		if (target[0] != '#')
-		{
-			Client *targetClientPtr = server.getClientByName(target);
-			if (!targetClientPtr)
-				return ":irctic.com 401 " + target + " :No such nick/channel"; // ERR_NOSUCHNICK
-			targetClientPtr->sendMessage(":" + client.nickname + "!" + client.username + "@irctic.com "
-				+ "PRIVMSG " + target + " :" + CTCP_DELIMITER
-				+ dccCommand
-				+ CTCP_DELIMITER + "\r\n");
-			return ""; // no direct server response to the sender
-		}
-		else
-			return ":irctic.com 400 " + target + " :Cannot DCC SEND to a channel"; // ERR_UNKNOWNERROR
-	}
 	else
 		return ":irctic.com 400 DCC :Unsupported DCC command"; // ERR_UNKNOWNERROR
 }
