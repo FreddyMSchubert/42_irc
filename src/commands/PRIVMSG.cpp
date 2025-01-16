@@ -19,17 +19,18 @@ std::string CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts,
 	}
 	msg += "\r\n";
 
-	if (msg.size() > 4 && msg.rfind("\x01" "DCC ", 0) == 0) // XXX: File transfer request
+	if (msg.size() > 4 && msg.rfind("\x01" "DCC ") != std::string::npos) // XXX: File transfer request
 	{
 	    std::cout << "DCC request" << std::endl;
-		std::string dccCommand = msg.substr(1, msg.size() - 2); // remove \x01's
+		std::string dccCommand = msg.substr(msg.rfind("\x01" "DCC "), msg.size() - 2); // remove \x01's
 		std::vector<std::string> dccParts = split(dccCommand, ' ');
 		if (dccParts.size() < 3)
 			return ":irctic.com 461 DCC :Not enough parameters for DCC"; // ERR_NEEDMOREPARAMS
 
 		std::string dccType = dccParts[1];
-		if (*dccType.begin() == ':')
-            dccType = dccType.substr(1);
+		std::cout << "DCC parts size: " << dccParts.size() << std::endl;
+		std::cout << "DCC type: " << dccType << std::endl;
+
 		if (dccType == "SEND" && dccParts.size() >= 5) // DCC SEND <filename> <ip> <port> <filesize> -> DCC file request
 		{
 			std::cout << "DCC SEND request from " << client.getName() << msg << std::endl;
