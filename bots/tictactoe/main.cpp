@@ -125,6 +125,11 @@ std::string Bot::ApiCall(const std::string &prompt)
 
 int main(int argc, char *argv[])
 {
+	if (argc != 6)
+	{
+		std::cerr << "Usage: <programname> <ip> <port> <nick> <user> <password>" << std::endl;
+		return 1;
+	}
 	try
 	{
 		Bot &bot = getBot();
