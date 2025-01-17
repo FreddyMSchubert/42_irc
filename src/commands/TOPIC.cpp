@@ -12,6 +12,7 @@ void CommandHandler::HandleTOPIC(const std::vector<std::string> &parts, Client &
 		return client.sendCodeResponse(482, "You're not channel operator", channel->name);
 	
 	channel->topic = parts[2];
-	channel->broadcast(":irctic.com 332 " + channel->name + " :" + channel->topic, server); // RPL_TOPIC
+	std::string userPrefix = ":" + client.nickname + "!" + client.username + "@" + "irctic.com";
+	channel->broadcast(userPrefix + " TOPIC " + channel->name + " :" + channel->topic, server, &client); // TOPIC
 	client.sendCodeResponse(332, channel->topic, channel->name); // RPL_TOPIC
 }
