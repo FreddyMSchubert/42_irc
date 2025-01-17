@@ -17,7 +17,7 @@ void Channel::addMember(unsigned int clientId, Server &server)
 	size_t currMemberInChannel = 0;
 	for (const auto& member : _members)
 		currMemberInChannel += member.second;
-	if (limit > 0 && currMemberInChannel >= (size_t)limit)
+	if ((limit > 0 && currMemberInChannel >= (size_t)limit) && !client->isOperatorIn(this))
 		return client->sendCodeResponse(471, "Cannot join channel (+l)", name);
 	if (_members[clientId])
 		return client->sendCodeResponse(443, "is already on that channel", name);
