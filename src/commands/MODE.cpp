@@ -6,9 +6,9 @@ void CommandHandler::HandleMODE(const std::vector<std::string> &parts, Client & 
 		return client.sendCodeResponse(461, "Not enough parameters", "MODE");
 	Channel *channel = server.getChannel(parts[1]);
 	if (!client.isOperatorIn(channel))
-		return client.sendCodeResponse(403, "No such channel", parts[1]);
-	if (!channel)
 		return client.sendCodeResponse(482, "You're not channel operator", parts[1]);
+	if (!channel)
+		return client.sendCodeResponse(403, "No such channel", parts[1]);
 
 	std::string mode = parts[2];
 	if (mode == "+i")
