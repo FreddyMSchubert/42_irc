@@ -44,6 +44,11 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 
 int main(int argc, char *argv[])
 {
+	if (argc != 6)
+	{
+		std::cerr << "Usage: <programname> <ip> <port> <nick> <user> <password>" << std::endl;
+		return 1;
+	}
 	try
 	{
 		Bot &bot = getBot();

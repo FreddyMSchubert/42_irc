@@ -40,7 +40,7 @@ std::string Bot::ApiCall(const std::string &prompt)
 
 	curl_easy_setopt(curl, CURLOPT_URL, "https://api.openai.com/v1/chat/completions");
 	headers = curl_slist_append(headers, "Content-Type: application/json");
-	headers = curl_slist_append(headers, "Authorization: Bearer key");
+	headers = curl_slist_append(headers, "Authorization: Bearer API_KEY");
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 	std::string jsonBody =
@@ -102,6 +102,11 @@ std::string Bot::ApiCall(const std::string &prompt)
 
 int main(int argc, char *argv[])
 {
+	if (argc != 6)
+	{
+		std::cerr << "Usage: <programname> <ip> <port> <nick> <user> <password>" << std::endl;
+		return 1;
+	}
 	try
 	{
 		Bot &bot = getBot();
