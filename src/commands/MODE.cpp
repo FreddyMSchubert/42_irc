@@ -4,7 +4,7 @@ void CommandHandler::HandleMODE(const std::vector<std::string> &parts, Client & 
 {
 	if (parts.size() < 3 || parts.size() > 4)
 		return client.sendCodeResponse(461, "Not enough parameters", "MODE");
-	Channel *channel = server.getChannel(parts[1]);
+	Channel *channel = server.getChannelByName(parts[1]);
 	if (!client.isOperatorIn(channel))
 		return client.sendCodeResponse(482, "You're not channel operator", parts[1]);
 	if (!channel)

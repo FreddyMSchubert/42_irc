@@ -103,8 +103,8 @@ void Server::handleExistingConnections()
 		if (_sockets[i].shouldDisconnect)
 		{
 			Logger::Log(LogLevel::INFO, "Client disconnected");
-			if (_sockets[i].channel)
-				_sockets[i].channel->removeMember(_sockets[i].id, *this);
+			if (_sockets[i].channelId && getChannelById(_sockets[i].channelId.value()))
+				getChannelById(_sockets[i].channelId.value())->removeMember(_sockets[i].id, *this);
 			_sockets.erase(_sockets.begin() + i);
 			continue;
 		}
@@ -114,8 +114,8 @@ void Server::handleExistingConnections()
 				Logger::Log(LogLevel::INFO, "Client disconnected");
 			else
 				Logger::Log(LogLevel::ERROR, "Client encountered an error and disconnected.");
-			if (_sockets[i].channel)
-				_sockets[i].channel->removeMember(_sockets[i].id, *this);
+			if (_sockets[i].channelId && getChannelById(_sockets[i].channelId.value()))
+				getChannelById(_sockets[i].channelId.value())->removeMember(_sockets[i].id, *this);
 			_sockets.erase(_sockets.begin() + i);
 			continue;
 		}
@@ -210,21 +210,26 @@ bool Server::isCorrectOperatorPassword(std::string passwordAttempt)
 	return passwordAttempt == _op_password;
 }
 
-Channel *Server::getChannel(std::string channelName)
-{
-	for (auto& channel_ptr : _channels)
-	{
-		if (channel_ptr.name == channelName)
-			return &channel_ptr;
-	}
-	return nullptr;
-}
 void Server::createChannel(std::string channelName)
 {
-	_channels.emplace_back(channelName);
+	_channels.emplace_back(channelName, current_id++);
 	Logger::Log(LogLevel::INFO, "Created new channel: " + channelName);
 }
 std::vector<Channel> &Server::getChannels()
 {
 	return _channels;
+}
+Channel *Server::getChannelById(unsigned int id)
+{
+	for (auto& channel : _channels)
+		if (channel.id == id)
+			return &channel;
+	return nullptr;
+}
+Channel *Server::getChannelByName(std::string name)
+{
+	for (auto& channel : _channels)
+		if (channel.name == name)
+			return &channel;
+	return nullptr;
 }

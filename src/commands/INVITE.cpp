@@ -4,7 +4,7 @@ void CommandHandler::HandleINVITE(const std::vector<std::string> &parts, Client 
 {
 	if (parts.size() != 3)
 		return client.sendCodeResponse(461, "Not enough parameters", "INVITE");
-	Channel *channel = server.getChannel(parts[2]);
+	Channel *channel = server.getChannelByName(parts[2]);
 	if (!channel)
 		return client.sendCodeResponse(403, "No such channel", parts[2]);
 	if (!client.isOperatorIn(channel))

@@ -66,7 +66,7 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 
 	if (target[0] == '#')
 	{
-		Channel *channel = server.getChannel(target);
+		Channel *channel = server.getChannelByName(target);
 		if (!channel)
 			return client.sendCodeResponse(403, "No such channel", target);
 		if (!channel->getMembers()[client.id])
@@ -87,7 +87,7 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 	}
 	else
 	{
-		client.sendMessage(msg);
+		client.sendCodeResponse(400, "Cannot send messages to yourself", target);
 	}
 
 	if (msg.back() == '\n')

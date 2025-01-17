@@ -46,9 +46,10 @@ class Server
 		bool isCorrectPassword(std::string passwordAttempt);
 		bool isCorrectOperatorPassword(std::string passwordAttempt);
 
-		Channel *getChannel(std::string channelName);
 		std::vector<Channel> &getChannels();
 		void createChannel(std::string channelName);
+		Channel *getChannelById(unsigned int id);
+		Channel *getChannelByName(std::string name);
 
 		std::vector<Client> &getClients();
 		Client * getClientById(unsigned int id);

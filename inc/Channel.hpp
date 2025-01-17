@@ -17,7 +17,9 @@ class Channel
 		std::map<unsigned int, bool> _invites;
 
 	public:
-		Channel(std::string name);
+		Channel(std::string name, unsigned int id);
+
+		unsigned int id;
 
 		std::string name = "";
 		std::string topic = "";

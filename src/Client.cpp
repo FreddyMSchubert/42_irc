@@ -14,7 +14,7 @@ Client::Client(Client&& other) noexcept :
 	states(other.states),
 	inbuffer(std::move(other.inbuffer)),
 	outbuffer(std::move(other.outbuffer)),
-	channel(other.channel),
+	channelId(other.channelId),
 	isAuthenticated(other.isAuthenticated),
 	isOperator(other.isOperator),
 	nickname(other.nickname),
@@ -30,7 +30,7 @@ Client& Client::operator=(Client&& other) noexcept
 	states = other.states;
 	inbuffer = other.inbuffer;
 	outbuffer = other.outbuffer;
-	channel = other.channel;
+	channelId = other.channelId;
 	isAuthenticated = other.isAuthenticated;
 	isOperator = other.isOperator;
 	nickname = other.nickname;

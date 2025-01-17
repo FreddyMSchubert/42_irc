@@ -2,7 +2,7 @@
 
 #include "../inc/Server.hpp"
 
-Channel::Channel(std::string name) : name(name) {};
+Channel::Channel(std::string name, unsigned int id) : id(id), name(name) {};
 
 void Channel::addMember(unsigned int clientId, Server &server)
 {
@@ -22,9 +22,10 @@ void Channel::addMember(unsigned int clientId, Server &server)
 	if (_members[clientId])
 		return client->sendCodeResponse(443, "is already on that channel", name);
 
-	if (client->channel)
-		client->channel->removeMember(clientId, server);
-	client->channel = this;
+	if (client->channelId)
+		if (server.getChannelById(client->channelId.value()))
+			server.getChannelById(client->channelId.value())->removeMember(clientId, server);
+	client->channelId = this->id;
 
 	_members[clientId] = true;
 	Logger::Log(LogLevel::INFO, std::string("Added client ") + client->nickname + " to channel " + name + ".");
@@ -61,7 +62,7 @@ std::string Channel::removeMember(unsigned int clientId, Server &server)
 	Client * client = server.getClientById(clientId); 
 	if (!client)
 		return ":irctic.com 401 * :No such nick/channel";
-	client->channel = nullptr;
+	client->channelId.reset();
 	broadcast(":" + client->nickname + "!" + client->username + "@irctic.com PART " + name, server, server.getClientById(clientId));
 	return ":" + client->nickname + "!" + client->username + "@irctic.com PART " + name;
 }

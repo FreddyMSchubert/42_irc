@@ -3,13 +3,9 @@
 void CommandHandler::HandleTOPIC(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	if (parts.size() != 3)
-	{
-		if (client.channel && client.channel->topic != "")
-			return client.sendCodeResponse(331, client.channel->topic, client.channel->name);
 		return client.sendCodeResponse(461, "Not enough parameters", "TOPIC");
-	}
 
-	Channel *channel = server.getChannel(parts[1]);
+	Channel *channel = server.getChannelByName(parts[1]);
 	if (!channel)
 		return client.sendCodeResponse(403, parts[1], "No such channel");
 	if (!client.isOperatorIn(channel) && !channel->anyoneCanChangeTopic)

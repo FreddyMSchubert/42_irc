@@ -4,6 +4,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <optional>
 
 class Channel; // avoid circ depend
 
@@ -18,13 +19,13 @@ typedef struct s_socket_state
 class Client
 {
 	public:
-		unsigned int	id;
-		Socket			socket;
-		int				fd;
-		t_socket_state	states;
-		std::string		inbuffer;
-		std::string		outbuffer;
-		Channel *		channel = nullptr;
+		unsigned int				id;
+		Socket						socket;
+		int							fd;
+		t_socket_state				states;
+		std::string					inbuffer;
+		std::string					outbuffer;
+		std::optional<unsigned int>	channelId;
 
 		Client(int fd, Socket socket, int id);	// Client socket constructor
 		Client(int port);						// Listening socket constructor

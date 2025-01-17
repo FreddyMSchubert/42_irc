@@ -7,8 +7,8 @@ void CommandHandler::HandleJOIN(const std::vector<std::string> &parts, Client & 
 	if (parts.size() < 2 || parts.size() > 3)
 	{
 		std::string response = ":irctic.com 461 JOIN :Not enough parameters"; // ERR_NEEDMOREPARAMS
-		if (client.channel)
-			response += ":irctic.com 442 " + client.channel->name + " :You are already on channel"; // ERR_USERONCHANNEL
+		if (client.channelId && server.getChannelById(client.channelId.value()))
+			response += ":irctic.com 442 " + server.getChannelById(client.channelId.value())->name + " :You are already on channel"; // ERR_USERONCHANNEL
 		if (server.getChannels().size() > 0)
 		{
 			response += ":irctic.com 353 " + client.nickname + " = :"; // RPL_NAMREPLY
@@ -22,13 +22,13 @@ void CommandHandler::HandleJOIN(const std::vector<std::string> &parts, Client & 
 	}
 
 	std::string channelName = parts[1];
-	Channel *channel = server.getChannel(channelName);
+	Channel *channel = server.getChannelByName(channelName);
 	if (!channel)
 	{
 		if (channelName[0] != '#')
 			return client.sendCodeResponse(476, "Invalid channel name", channelName); // ERR_BADCHANNELKEY
 		server.createChannel(channelName);
-		channel = server.getChannel(channelName);
+		channel = server.getChannelByName(channelName);
 	}
 
 	if (channel->password != "" && (parts.size() < 3 || parts[2] != channel->password))
@@ -38,5 +38,5 @@ void CommandHandler::HandleJOIN(const std::vector<std::string> &parts, Client & 
 		return client.sendCodeResponse(474, "Cannot join channel (+b)", channelName); // ERR_BANNEDFROMCHAN
 
 	channel->addMember(client.id, server);
-	client.channel = channel;
+	client.channelId = channel->id;
 }
