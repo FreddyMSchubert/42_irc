@@ -3,8 +3,7 @@
 void CommandHandler::HandleQUIT(const std::vector<std::string> &parts, Client & client, Server &server)
 {
 	(void)server;
-	if (parts.size() > 1)
-		return client.sendCodeResponse(461, "Not enough parameters", "QUIT");
+	(void)parts;
 	client.shouldDisconnect = true;
 	Channel *channel = server.getChannelById(client.channelId.value());
 	if (channel)

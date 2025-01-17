@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
-#include <sstream>
 #include <csignal>
 #include <cstring>
 #include <regex>
@@ -68,12 +67,9 @@ void Socket::connectToServer(std::string ip, int port)
 
 		if (connect(_socket_fd, (struct sockaddr *)&_socket, sizeof(_socket)) < 0)
 		{
-			if (errno != EINPROGRESS)
-			{
-				close(_socket_fd);
-				_onErrorCallback("Failed to connect to server: " + std::string(strerror(errno)));
-				throw std::runtime_error("Failed to connect to server: " + std::string(strerror(errno)));
-			}
+			close(_socket_fd);
+			_onErrorCallback("Failed to connect to server!");
+			throw std::runtime_error("Failed to connect to server!");
 		}
 		else
 		{
@@ -107,13 +103,8 @@ void Socket::_sendMessage(std::string msg)
 	ssize_t sent = send(_socket_fd, msg.c_str(), msg.length(), 0); //TODO: for some reason it sends everything except the last char
 	if (sent == -1)
 	{
-		if (errno == EPIPE)
-		{
-			_onErrorCallback("Server closed the connection already. Unable to send message");
-			_running = false;
-		}
-		else
-			_onErrorCallback("Failed to send message");
+		_running = false;
+		_onErrorCallback("Failed to send message");
 	}
 	else if (sent < static_cast<ssize_t>(msg.length()))
 		std::cerr << "Warning: Partial message sent: " << sent << " of " << msg.length() << " bytes" << std::endl;
@@ -134,7 +125,7 @@ void Socket::Run()
 	{
 		int ret = poll(fds, 1, 200);
 		if (ret == -1)
-			_onErrorCallback("Poll error: " + std::string(strerror(errno)));
+			_onErrorCallback("Poll error!");
 		else if (ret > 0 && _running)
 		{
 			if (fds[0].revents & POLLIN && _running)
@@ -151,8 +142,8 @@ void Socket::Run()
 				}
 				else if (valread < 0)
 				{
-					std::cerr << "-> Read error: " << strerror(errno) << std::endl;
-					_onErrorCallback("Read error: " + std::string(strerror(errno)));
+					std::cerr << "-> Read error!" << std::endl;
+					_onErrorCallback("Read error!");
 					_running = false;
 				}
 				else

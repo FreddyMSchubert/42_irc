@@ -111,9 +111,9 @@ void onError(std::string message)
 // custom function to handle messages
 void onMessage(std::string user, std::string channel, std::string message)
 {
-	std::cout << "Received message from " << user << " in channel " << channel << ": " << message << std::endl;
+	std::cout << "Received message from " << user << " in channel " << channel << "= '" << message << "'" << std::endl;
 
-	if (channel != "jokes") return;
+	if (channel != "#jokes") return;
 
 	Bot &bot = getBot();
 
