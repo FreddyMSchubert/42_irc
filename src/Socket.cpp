@@ -110,9 +110,6 @@ std::string Socket::receiveData()
 
 void Socket::setNonBlocking()
 {
-	int flags = fcntl(_socket_fd, F_GETFL, 0);
-	if (flags == -1)
-		throw std::runtime_error("Failed to get socket " + std::to_string(_socket_fd) + " flags");
-	if (fcntl(_socket_fd, F_SETFL, flags | O_NONBLOCK) == -1)
+	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1)
 		throw std::runtime_error("Failed to set non-blocking mode on socket " + std::to_string(_socket_fd));
 }
