@@ -83,7 +83,7 @@ void CommandHandler::HandlePRIVMSG(const std::vector<std::string> &parts, Client
 			return client.sendCodeResponse(401, "No such nick/channel", target);
 		if (!targetClientPtr->isAuthenticated)
 			return client.sendCodeResponse(401, "No such nick/channel", target);
-		targetClientPtr->sendMessage(":" + msg);
+		targetClientPtr->sendMessage(msg);
 	}
 	else
 	{
