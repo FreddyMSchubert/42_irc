@@ -22,8 +22,11 @@ void Channel::addMember(unsigned int clientId, Server &server)
 	if (_members[clientId])
 		return client->sendCodeResponse(443, "is already on that channel", name);
 
-	_members[clientId] = true;
+	if (client->channel)
+		client->channel->removeMember(clientId, server);
 	client->channel = this;
+
+	_members[clientId] = true;
 	Logger::Log(LogLevel::INFO, std::string("Added client ") + client->nickname + " to channel " + name + ".");
 	std::string joinMsg = ":" + client->nickname + "!" + client->username + "@" + server.name + " JOIN :" + name + "\r\n";
 	broadcast(joinMsg, server, server.getClientById(clientId));
