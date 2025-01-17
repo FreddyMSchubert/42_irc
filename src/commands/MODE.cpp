@@ -23,12 +23,12 @@ void CommandHandler::HandleMODE(const std::vector<std::string> &parts, Client & 
 	}
 	else if (mode == "+t")
 	{
-		channel->anyoneCanChangeTopic = true;
+		channel->anyoneCanChangeTopic = false;
 		channel->broadcast(":irctic.com MODE " + channel->name + " +t", server); // RPL_CHANNELMODEIS
 	}
 	else if (mode == "-t")
 	{
-		channel->anyoneCanChangeTopic = false;
+		channel->anyoneCanChangeTopic = true;
 		channel->broadcast(":irctic.com MODE " + channel->name + " -t", server); // RPL_CHANNELMODEIS
 	}
 	else if (mode == "+k")

@@ -13,7 +13,7 @@ void CommandHandler::HandleTOPIC(const std::vector<std::string> &parts, Client &
 	if (!channel)
 		return client.sendCodeResponse(403, parts[1], "No such channel");
 	if (!client.isOperatorIn(channel) && !channel->anyoneCanChangeTopic)
-		client.sendCodeResponse(482, "You're not channel operator", channel->name);
+		return client.sendCodeResponse(482, "You're not channel operator", channel->name);
 	
 	channel->topic = parts[2];
 	channel->broadcast(":irctic.com 332 " + channel->name + " :" + channel->topic, server); // RPL_TOPIC
