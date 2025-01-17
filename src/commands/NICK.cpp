@@ -13,7 +13,7 @@ void CommandHandler::HandleNICK(const std::vector<std::string> &parts, Client & 
 		if (c.nickname == parts[1])
 			return client.sendCodeResponse(433, "Nickname is already in use", parts[1]);
 	client.nickname = parts[1];
-	if (client.updateAuthStatus())
-			CompleteHandshake(client);
 	client.sendCodeResponse(200, "Nickname is now \"" + parts[1] + "\"", "NICK");
+	if (client.updateAuthStatus())
+		CompleteHandshake(client);
 }

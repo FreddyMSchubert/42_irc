@@ -13,7 +13,7 @@ void CommandHandler::HandleUSER(const std::vector<std::string> &parts, Client & 
 		if (c.username == parts[1])
 			return client.sendCodeResponse(464, "Username is already in use");
 	client.username = parts[1];
+	client.sendCodeResponse(200, "Username set to " + parts[1]);
 	if (client.updateAuthStatus())
-			CompleteHandshake(client);
-	return client.sendCodeResponse(200, "Username set to " + parts[1]);
+		CompleteHandshake(client);
 }

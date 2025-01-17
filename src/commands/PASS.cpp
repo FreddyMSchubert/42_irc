@@ -10,9 +10,9 @@ void CommandHandler::HandlePASS(const std::vector<std::string> &parts, Client & 
 	if (server.isCorrectPassword(parts[1]))
 	{
 		client.knewPassword = true;
+		client.sendCodeResponse(900, "Password correct"); // Custom success reply
 		if (client.updateAuthStatus())
 			CompleteHandshake(client);
-		client.sendCodeResponse(900, "Password correct"); // Custom success reply
 		return;
 	}
 	client.sendCodeResponse(464, "Password incorrect"); // ERR_PASSWDMISMATCH
