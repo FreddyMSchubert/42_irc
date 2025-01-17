@@ -52,7 +52,7 @@ void Server::updatePoll()
 	int ret = poll(fds.data(), fds.size(), 10);
 	if (ret < 0)
 	{
-		Logger::Log(LogLevel::ERROR, "Poll error: " + std::string(strerror(errno)) + " -> means that there is no data to read.");
+		Logger::Log(LogLevel::ERROR, "Poll failed.");
 		return;
 	}
 
@@ -113,7 +113,7 @@ void Server::handleExistingConnections()
 			if (_sockets[i].states.disconnect)
 				Logger::Log(LogLevel::INFO, "Client disconnected");
 			else
-				Logger::Log(LogLevel::ERROR, "Error occurred with client: " + std::string(strerror(errno)));
+				Logger::Log(LogLevel::ERROR, "Client encountered an error and disconnected.");
 			if (_sockets[i].channel)
 				_sockets[i].channel->removeMember(_sockets[i].id, *this);
 			_sockets.erase(_sockets.begin() + i);
