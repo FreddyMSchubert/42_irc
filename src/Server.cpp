@@ -125,7 +125,6 @@ void Server::handleExistingConnections()
 			{
 				std::string data = _sockets[i].socket.receiveData();
 				_sockets[i].inbuffer += data;
-				std::cout << "Received: \"" << data << "\"" << std::endl; // temporary, for irssi debugging
 			}
 			catch(const std::runtime_error &e)
 			{
@@ -140,7 +139,6 @@ void Server::handleExistingConnections()
 			try
 			{
 				_sockets[i].socket.sendData(_sockets[i].outbuffer);
-				std::cout << "Sent: \"" << _sockets[i].outbuffer << "\"" << std::endl; // temporary, for irssi debugging
 				_sockets[i].outbuffer.clear();
 			}
 			catch (const std::exception &e)
