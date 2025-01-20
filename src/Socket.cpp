@@ -46,7 +46,7 @@ Socket::Socket(int fd, int port) : _port(port)
 {
 	_socket_fd = fd;
 	try {
-	    setNonBlocking();
+		setNonBlocking();
     }
     catch(const std::exception &e)
     {
