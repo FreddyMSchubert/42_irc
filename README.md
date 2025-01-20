@@ -2,6 +2,8 @@
 
 ![Boundary](https://github.com/FreddyMSchubert/42_cub3d/blob/master/assets/readme/boundaries/boundary-2.png)
 
+![Basic output](https://github.com/FreddyMSchubert/42_irc/blob/main/assets/basic_execution.png)
+
 # Installation
 
 *(The program was tested on Mac & Linux.)*
