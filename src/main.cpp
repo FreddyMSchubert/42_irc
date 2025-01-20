@@ -3,16 +3,17 @@
 
 #include <string>
 #include <csignal>
+#include <atomic>
+#include <unistd.h>
 
-bool running = true;
+volatile sig_atomic_t running = true;
 
 void handle_sigint(int signal)
 {
-	if (signal == SIGINT)
-	{
-		Logger::Log(LogLevel::INFO, "SIGINT received, shutting down server...");
-		running = false;
-	}
+	if (signal != SIGINT)
+		return ;
+	write(STDOUT_FILENO, "SIGINT received, shutting down server...\n", 40);
+	running = false;
 }
 
 int main(int argc, char **argv)
@@ -31,26 +32,29 @@ int main(int argc, char **argv)
 	std::string opPassword = argv[3];
 	try
 	{
-		port = std::atoi(argv[1]);
+		port = std::stoi(argv[1]);
 	}
 	catch (const std::exception &e)
 	{
 		Logger::Log(LogLevel::ERROR, std::string("Problem parsing arguments: ") + e.what());
+		return -1;
 	}
-	if (port < 0)
+	if (port <= 0 || port > 65535)
 	{
 		Logger::Log(LogLevel::ERROR, "Trouble parsing port");
+		return -1;
 	}
 
-	try {
-	    Server cm(port, password, opPassword);
+	try
+	{
+		Server cm(port, password, opPassword);
 		cm.Run();
 	}
 	catch (const std::exception &e)
-    {
-        Logger::Log(LogLevel::ERROR, std::string("Failed to create server: ") + e.what());
-        return -1;
-    }
+	{
+		Logger::Log(LogLevel::ERROR, std::string("Failed to create server: ") + e.what());
+		return -1;
+	}
 
 	return 0;
 }
